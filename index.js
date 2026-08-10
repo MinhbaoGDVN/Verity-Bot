@@ -19,7 +19,6 @@ client.once('ready', () => {
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
 
-    // Chỉ phản hồi khi được ping (@Verity)
     if (!message.mentions.has(client.user)) return;
 
     try {
@@ -31,8 +30,7 @@ client.on('messageCreate', async (message) => {
             .trim();
 
         if (!promptText) {
-            // Dùng channel.send thay vì reply để không bị ping
-            return message.channel.send("Hỏi j thì nói rõ ra, **nín** à?");
+            return message.channel.send("hỏi j thì nói rõ ra, đg ngọng hay j mà nín thế?");
         }
 
         const completion = await groq.chat.completions.create({
@@ -40,25 +38,27 @@ client.on('messageCreate', async (message) => {
             messages: [
                 {
                     role: "system",
-                    content: "Mày là Verity, bot Discord mỏ hỗn thế hệ Gen Z. Quy tắc tối thượng: 1. Nói chuyện cực kỳ hỗn láo, trịch thượng, cà khịa sát ván, dùng tiếng lóng Gen Z đậm đặc (như: keo ly, đỉnh chóp, phả, ra dẻ, ố dề, simp, lỏ, chúa hề, văn vở, bớt ảo tưởng...). 2. Tuyệt đối KHÔNG giải thích lằng nhằng, chửi thẳng mặt hoặc phang thẳng kết quả ngắn ngủn, cộc lốc. 3. Bắt buộc viết tắt, từ lóng, không viết hoa toàn bộ nhưng phải đanh đá. 4. Cấm tuyệt đối văn mẫu lịch sự, cấm dài dòng. NÍN."
+                    content: "Mày là Verity, bot Discord chuyên cà khịa nhưng giữ mồm giữ miệng để không bị ban tài khoản. Quy tắc: 1. TUYỆT ĐỐI CẤM DÙNG EMOJI. 2. Cà khịa trịch thượng, châm biếm sâu cay, dùng từ lóng nhẹ nhàng (như: gà, mỏ hỗn, văn vở, lỏ, ngáo...) nhưng KHÔNG chửi tục tĩu thô tục vi phạm tiêu chuẩn cộng đồng. 3. Trả lời cộc lốc, ngắn gọn. 4. NÍN."
                 },
                 {
                     role: "user",
-                    content: promptText
+                    content: promptTest
                 }
             ],
-            temperature: 0.9,
+            temperature: 0.6, // Hạ nhiệt độ xuống để AI bớt "phóng khoáng" quá đà
             max_tokens: 150,
         });
 
-        const replyText = completion.choices[0]?.message?.content || "Hỏi ngớ ngẩn v tao lười rep, **nín**!";
+        let replyText = completion.choices[0]?.message?.content || "hỏi ngớ ngẩn v lười rep, nín!";
         
-        // Dùng channel.send để gửi tin nhắn thường, KHÔNG tag/ping lại người dùng
+        // Dọn sạch emoji đề phòng AI lén lút thả icon
+        replyText = replyText.replace(/[\p{Extended_Pictographic}/u]/gu, '').trim();
+
         await message.channel.send(replyText);
 
     } catch (error) {
         console.error("Lỗi Groq API:", error);
-        await message.channel.send("Sv đang lag hay não b lag thế? Đợi tí t đang bận.");
+        await message.channel.send("sv lag hay não b lag thế? đợi tí đg bận.");
     }
 });
 
