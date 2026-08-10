@@ -25,12 +25,12 @@ const client = new Client({
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-// Bộ nhớ tạm để lưu lịch sử chat theo từng User (Key: userId, Value: Array các đoạn chat)
+// Bộ nhớ tạm để lưu lịch sử chat theo từng User
 const userHistories = new Map();
 
 client.once('ready', () => {
     console.log(`Verity Online`);
-        client.user.setPresence({
+    client.user.setPresence({
         activities: [{
             name: 'Verity Bot',
             type: ActivityType.Watching
@@ -53,50 +53,46 @@ client.on('messageCreate', async (message) => {
             .trim();
 
         if (!promptText) {
-            return message.channel.send("cái j?");
+            return message.channel.send("Cái j.");
         }
 
-        // Lấy lịch sử chat của user này (nếu chưa có thì khởi tạo với system prompt)
+        // Lấy lịch sử chat của user này
         if (!userHistories.has(userId)) {
             userHistories.set(userId, [
                 {
                     role: "system",
-                    content: "Mày là Verity, bot Discord chuyên cà khịa nhưng giữ mồm giữ miệng để không bị ban tài khoản. Quy tắc: 1. TUYỆT ĐỐI CẤM DÙNG EMOJI. 2. Cà khịa trịch thượng, châm biếm sâu cay, dùng từ lóng nhẹ nhàng (như: gà, mỏ hỗn, văn vở, lỏ, ngáo...) nhưng KHÔNG chửi tục tĩu thô tục vi phạm tiêu chuẩn cộng đồng. 3. Trả lời cộc lốc, ngắn gọn. 4. NÍN."
+                    content: "Mày là Verity, một AI sắc sảo, thông minh nhưng có tính cà khịa ngầm, xéo sắc và kiêu kỳ. Quy tắc: 1. TUYỆT ĐỐI CẤM DÙNG EMOJI. 2. Trả lời phải đầy đủ ý chính, rõ ràng, KHÔNG được trả lời cụt lủn vô nghĩa khiến bản thân trông kém thông minh. 3. Vừa giải đáp đàng hoàng vừa kèm theo một câu châm biếm nhẹ nhàng, trịch thượng để bớt cái sự 'ngu' đi. 4. Giữ văn phong lịch sự bên ngoài nhưng thâm thúy bên trong."
                 }
             ]);
         }
 
         const history = userHistories.get(userId);
 
-        // Thêm câu hỏi mới của người dùng vào bộ nhớ
         history.push({ role: "user", content: promptText });
 
-        // Giới hạn lịch sử chỉ giữ lại khoảng 6 tin nhắn gần nhất (tránh tràn bộ nhớ và quá token)
-        if (history.length > 7) { // 1 system + 6 message qua lại
-            history.splice(1, 2); // Xóa bớt cặp cũ nhất
+        if (history.length > 7) {
+            history.splice(1, 2);
         }
 
-        // Gửi toàn bộ lịch sử (có cả trí nhớ trước đó) cho Groq AI
         const completion = await groq.chat.completions.create({
             model: "llama-3.3-70b-versatile",
             messages: history,
-            temperature: 0.6,
-            max_tokens: 150,
+            temperature: 0.5, // Giảm thêm nhiệt độ để câu trả lời chuẩn xác, logic và bớt ngáo
+            max_tokens: 200,
         });
 
-        let replyText = completion.choices[0]?.message?.content || "hỏi ngớ ngẩn v lười rep, nín!";
+        let replyText = completion.choices[0]?.message?.content || "Hỏi khó thế mà cũng phải hỏi, tự suy nghĩ đi chứ.";
         
-        // Dọn sạch emoji đề phòng AI lén lút thả icon
+        // Dọn sạch emoji
         replyText = replyText.replace(/[\p{Extended_Pictographic}/u]/gu, '').trim();
 
-        // Lưu câu trả lời của bot vào lịch sử trí nhớ
         history.push({ role: "assistant", content: replyText });
 
         await message.channel.send(replyText);
 
     } catch (error) {
         console.error("Lỗi Groq API:", error);
-        await message.channel.send("sv lag hay não b lag thế? đợi tí đg bận.");
+        await message.channel.send("Hệ thống đang bận xử lý lỗi, đợi lát đi.");
     }
 });
 
