@@ -41,14 +41,18 @@ client.once('ready', () => {
 
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
-    if (!message.mentions.has(client.user)) return;
+    
+    const botMention1 = `<@${client.user.id}>`;
+    const botMention2 = `<@!${client.user.id}>`;
+    
+    if (!message.content.includes(botMention1) && !message.content.includes(botMention2)) return;
 
     try {
         await message.channel.sendTyping();
 
         const userId = message.author.id;
         const promptText = message.content
-            .replace(/<@!?1496821735872401418>/g, '')
+            .replace(/<@${client.user.id}>/g, '')
             .trim();
 
         if (!promptText) {
