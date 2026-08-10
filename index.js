@@ -32,7 +32,7 @@ client.once('ready', () => {
     console.log(`Verity Online`);
         client.user.setPresence({
         activities: [{
-            name: 'Verity Bot (Make by MinhbaoGDVN)',
+            name: 'Verity Bot',
             type: ActivityType.Watching
         }],
         status: 'online'
@@ -53,7 +53,7 @@ client.on('messageCreate', async (message) => {
             .trim();
 
         if (!promptText) {
-            return message.channel.send("hỏi j thì nói rõ ra, đg ngọng hay j mà nín thế?");
+            return message.channel.send("cái j?");
         }
 
         // Lấy lịch sử chat của user này (nếu chưa có thì khởi tạo với system prompt)
