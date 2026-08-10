@@ -48,8 +48,7 @@ client.on('messageCreate', async (message) => {
 
         const userId = message.author.id;
         const promptText = message.content
-            .replace(`<@!${client.user.id}>`, '')
-            .replace(`<@${client.user.id}>`, '')
+            .replace(/<@!?1496821735872401418>/g, '')
             .trim();
 
         if (!promptText) {
