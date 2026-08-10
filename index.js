@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits } = require('discord.js');
+const { Client, GatewayIntentBits, ActivityType } = require('discord.js');
 const { Groq } = require('groq-sdk');
 const http = require('http');
 require('dotenv').config();
@@ -30,6 +30,13 @@ const userHistories = new Map();
 
 client.once('ready', () => {
     console.log(`Verity Online`);
+        client.user.setPresence({
+        activities: [{
+            name: 'Verity Bot (Make by MinhbaoGDVN)',
+            type: ActivityType.Watching
+        }],
+        status: 'online'
+    });
 });
 
 client.on('messageCreate', async (message) => {
