@@ -1,7 +1,21 @@
 const { Client, GatewayIntentBits } = require('discord.js');
 const { Groq } = require('groq-sdk');
+const http = require('http'); // Thêm thư viện http native của Node.js
 require('dotenv').config();
 
+// 1. Tạo một HTTP server mini để Render không bị timeout và hiện thông báo khi truy cập link web
+const server = http.createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.end('Verity Bot đang hoạt động ngon nghẻ, đừng có phá!\n');
+});
+
+// Render cung cấp biến môi trường PORT, nếu chạy local thì mặc định là 3000
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+    console.log(`HTTP Server đang chạy trên cổng ${PORT}`);
+});
+
+// 2. Khởi động Discord Bot như bình thường
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -42,16 +56,15 @@ client.on('messageCreate', async (message) => {
                 },
                 {
                     role: "user",
-                    content: promptTest
+                    content: promptText
                 }
             ],
-            temperature: 0.6, // Hạ nhiệt độ xuống để AI bớt "phóng khoáng" quá đà
+            temperature: 0.6,
             max_tokens: 150,
         });
 
         let replyText = completion.choices[0]?.message?.content || "hỏi ngớ ngẩn v lười rep, nín!";
         
-        // Dọn sạch emoji đề phòng AI lén lút thả icon
         replyText = replyText.replace(/[\p{Extended_Pictographic}/u]/gu, '').trim();
 
         await message.channel.send(replyText);
