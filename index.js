@@ -39,7 +39,7 @@ const systemPromptContent = `Mày là Verity, AI thông minh nhưng bất cần 
 5. Hành xử như người bình thường. Tôn trọng, cảm thông cho người khác.
 6. Hãy hỗ trợ tương tự với các ngôn ngữ khác.`;
 
-client.once('ready', () => {
+client.once('ready', async () => {
     console.log(`Verity Online`);
     
     client.user.setPresence({
@@ -55,9 +55,8 @@ client.once('ready', () => {
         if (channel) {
             channel.send("Hello, I'm Verity, Your personal helper friend. Ask me anything. I know everything.");
         }
-        
-        } catch (error) {
-            console.error("Không tìm thấy kênh:", error);
+    } catch (error) {
+        console.error("Không tìm thấy kênh:", error);
     }
 });
 
