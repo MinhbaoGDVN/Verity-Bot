@@ -96,7 +96,7 @@ client.on('messageCreate', async (message) => {
             if (promptText) contents.push(promptText);
 
             const geminiResponse = await ai.models.generateContent({
-                model: 'gemini-1.5-flash',
+                model: 'gemini-2.0-flash',
                 contents: contents,
                 config: {
                     systemInstruction: systemPromptContent,
