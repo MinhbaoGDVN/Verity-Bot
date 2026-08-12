@@ -51,7 +51,7 @@ client.once('ready', () => {
     });
     
     try {
-        const channel = await client.channels.fetch('DÁN_ID_KENH_CUA_BAN_VÀO_ĐÂY');
+        const channel = await client.channels.fetch('1519192818332073984');
         if (channel) {
             channel.send("Hello, I'm Verity, Your personal helper friend. Ask me anything. I know everything.");
         }
