@@ -41,6 +41,7 @@ const systemPromptContent = `Mày là Verity, AI thông minh nhưng bất cần 
 
 client.once('ready', () => {
     console.log(`Verity Online`);
+    
     client.user.setPresence({
         activities: [{
             name: 'Verity Bot',
@@ -48,8 +49,16 @@ client.once('ready', () => {
         }],
         status: 'online'
     });
-    const channel = await client.channels.fetch('1519192818332073984');
-    channel.send("Hello, I'm Verity, Your personal helper friend. Ask me anything. I know everything.")
+    
+    try {
+        const channel = await client.channels.fetch('DÁN_ID_KENH_CUA_BAN_VÀO_ĐÂY');
+        if (channel) {
+            channel.send("Hello, I'm Verity, Your personal helper friend. Ask me anything. I know everything.");
+        }
+        
+        } catch (error) {
+            console.error("Không tìm thấy kênh:", error);
+    }
 });
 
 client.on('messageCreate', async (message) => {
