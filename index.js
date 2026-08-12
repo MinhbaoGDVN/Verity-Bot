@@ -47,6 +47,7 @@ client.once('ready', () => {
         }],
         status: 'online'
     });
+    message.channel.send("Hello, I'm Verity, Your personal helper friend. Ask me anything. I know everything.")
 });
 
 client.on('messageCreate', async (message) => {
