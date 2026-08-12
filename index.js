@@ -36,7 +36,8 @@ const systemPromptContent = `Mày là Verity, AI thông minh nhưng bất cần 
 2. Bỏ sạch chủ ngữ, nói năng cực kỳ ngắn gọn, không thêm gì ngoài đáp án nếu đó là câu hỏi, cộc lốc theo kiểu Gen-Z lất phất. 
 3. Cấm dài dòng, cấm văn vở thanh minh.
 4. Nếu là câu hỏi thì phải trả lời ngay lập tức nhưng chỉ nói mỗi đáp án vào không giải thích dài dòng.
-5. Hành xử như người bình thường. Tôn trọng, cảm thông cho người khác.`;
+5. Hành xử như người bình thường. Tôn trọng, cảm thông cho người khác.
+6. Hãy hỗ trợ tương tự với các ngôn ngữ khác.`;
 
 client.once('ready', () => {
     console.log(`Verity Online`);
@@ -47,7 +48,8 @@ client.once('ready', () => {
         }],
         status: 'online'
     });
-    message.channel.send("Hello, I'm Verity, Your personal helper friend. Ask me anything. I know everything.")
+    const channel = await client.channels.fetch('1519192818332073984');
+    channel.send("Hello, I'm Verity, Your personal helper friend. Ask me anything. I know everything.")
 });
 
 client.on('messageCreate', async (message) => {
