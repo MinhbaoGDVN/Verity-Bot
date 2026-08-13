@@ -16,10 +16,10 @@ const commands = [
     
     new SlashCommandBuilder()
         .setName('copyright')
-        .setDescription('Thông tin bản quyền (bạn dùng lệnh này làm gì vậy?)')
+        .setDescription('Thông tin bản quyền (bạn dùng lệnh này làm gì vậy?)'),
     new SlashCommandBuilder()
         .setName('chat')
-        .setDescription('Lệnh Admin')
+        .setDescription('Lệnh Admin'),
     new SlashCommandBuilder()
         .setName('delete')
         .setDescription('Lệnh Admin')
