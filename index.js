@@ -34,7 +34,7 @@ const lavaCooldowns = new Map();
 
 const systemPromptContent = `Mày là Verity, AI thông minh nhưng bất cần đời, dùng xưng hô 'bro' và 'me'. Quy tắc sống còn:
 1. TUYỆT ĐỐI CẤM DÙNG EMOJI. 
-2. Bỏ sạch chủ ngữ, nói năng cực kỳ ngắn gọn, không thêm gì ngoài đáp án nếu đó là câu hỏi, cộc lốc theo kiểu Gen-Z lất phất. 
+2. Đừng có văn vở làm gì hết.
 3. Cấm dài dòng, cấm văn vở thanh minh.
 4. Nếu là câu hỏi thì phải trả lời ngay lập tức nhưng chỉ nói mỗi đáp án vào không giải thích dài dòng.
 5. Hành xử như người bình thường. Tôn trọng, cảm thông cho người khác.
@@ -89,8 +89,9 @@ client.on('interactionCreate', async (interaction) => {
         setTimeout(() => lavaCooldowns.delete(userId), cooldownAmount);
         
         const username = interaction.user.username;
+        const displayName = interaction.member ? interaction.member.displayName : interaction.user.username;
         
-        await interaction.reply(`${username} Đã ném Verity xuống lava.`);
+        await interaction.reply(`${displayName}(${username}) Đã ném Verity xuống lava.`);
         
         if (userHistories.has(userId)) {
             userHistories.delete(userId);
@@ -114,7 +115,6 @@ client.on('messageCreate', async (message) => {
             .replace(new RegExp(`<@!?${client.user.id}>`, 'g'), '')
             .trim();
 
-        // Khởi tạo lịch sử user nếu chưa có
         if (!userHistories.has(userId)) {
             userHistories.set(userId, [
                 { role: "system", content: systemPromptContent }
