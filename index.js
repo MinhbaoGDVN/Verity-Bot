@@ -12,11 +12,11 @@ const server = http.createServer((req, res) => {
 const commands = [
     new SlashCommandBuilder()
         .setName('lava')
-        .setDescription('Ném Verity xuống lava');
+        .setDescription('Ném Verity xuống lava')
     
     new SlashCommandBuilder()
         .setName('copyright')
-        .setDescription('Thông tin bản quyền (bạn dùng lệnh này làm gì vậy?)');
+        .setDescription('Thông tin bản quyền (bạn dùng lệnh này làm gì vậy?)')
 ].map(command => command.toJSON());
 
 const PORT = process.env.PORT || 3000;
