@@ -4,7 +4,6 @@ const { GoogleGenAI } = require('@google/genai');
 const http = require('http');
 require('dotenv').config();
 
-// 1. Tạo HTTP server mini cho Render
 const server = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
     res.end('Verity Bot Online\nNếu lỗi vui lòng liên hệ @MinhbaoGDVN');
@@ -19,7 +18,6 @@ server.listen(PORT, () => {
     console.log(`HTTP Server đang chạy trên cổng ${PORT}`);
 });
 
-// 2. Khởi động Discord Bot
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -28,12 +26,11 @@ const client = new Client({
     ],
 });
 
-// Khởi tạo cả Groq và Gemini
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-// Bộ nhớ tạm để lưu lịch sử chat theo từng User (lưu dạng text cho Groq)
 const userHistories = new Map();
+const lavaCooldowns = new Map();
 
 const systemPromptContent = `Mày là Verity, AI thông minh nhưng bất cần đời, dùng xưng hô 'bro' và 'me'. Quy tắc sống còn:
 1. TUYỆT ĐỐI CẤM DÙNG EMOJI. 
@@ -46,6 +43,19 @@ const systemPromptContent = `Mày là Verity, AI thông minh nhưng bất cần 
 client.once('ready', async () => {
     console.log(`Verity Online`);
     
+    try {
+        const guildId = '1417113255738085408';
+        const rest = new require('discord.js').REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
+        
+        await rest.put(
+            require('discord.js').Routes.applicationGuildCommands(client.user.id, guildId),
+            { body: [lavaCommand.toJSON()] },
+        );
+        console.log('Đã đăng ký thành công lệnh /lava!');
+    } catch (error) {
+        console.error('Lỗi đăng ký lệnh:', error);
+    }
+
     client.user.setPresence({
         activities: [{
             name: 'Verity Bot',
@@ -124,9 +134,8 @@ client.on('messageCreate', async (message) => {
         let replyText = "";
         const hasAttachment = message.attachments.size > 0;
 
-        // --- CHIẾN THUẬT LAI ---
         if (hasAttachment) {
-            // NẾU CÓ ẢNH/FILE: Gọi Gemini để nó đọc file (tiết kiệm số lần dùng vì ít khi gửi file)
+
             const contents = [];
             for (const [, attachment] of message.attachments) {
                 const response = await fetch(attachment.url);
@@ -155,19 +164,16 @@ client.on('messageCreate', async (message) => {
 
             replyText = geminiResponse.text || "Đọc kiểu gì khó hiểu thế.";
             
-            // Lưu vào lịch sử chung dạng text để đồng bộ
             history.push({ role: "user", content: promptText || "[Đã gửi tệp đính kèm]" });
             history.push({ role: "assistant", content: replyText });
 
         } else {
-            // NẾU LÀ VĂN BẢN THUẦN TÚY: Dùng Groq (Siêu nhanh, không giới hạn, không sợ tràn quota)
             if (!promptText) {
                 return message.channel.send("Cái j.");
             }
 
             history.push({ role: "user", content: promptText });
 
-            // Giới hạn lịch sử tránh quá tải token
             if (history.length > 7) {
                 history.splice(1, 2);
             }
@@ -184,7 +190,6 @@ client.on('messageCreate', async (message) => {
             history.push({ role: "assistant", content: replyText });
         }
         
-        // Dọn sạch emoji đề phòng lén lút xuất hiện
         replyText = replyText.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '').trim();
 
         await message.channel.send(replyText);
