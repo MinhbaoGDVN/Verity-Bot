@@ -1,7 +1,7 @@
 const { Client, GatewayIntentBits, ActivityType, SlashCommandBuilder, REST, Routes } = require('discord.js');
 const { Groq } = require('groq-sdk');
 const { GoogleGenAI } = require('@google/genai');
-const clientID = 1537099276327587880
+const clientId = '1537099276327587880';
 const http = require('http');
 require('dotenv').config();
 
