@@ -51,11 +51,13 @@ client.once('ready', async () => {
     
 try {
         const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
+        const clientID = 1537099276327587880
         
         await rest.put(
             Routes.applicationCommands(clientId),
             { body: commands },
         );
+    
         console.log('Đã đăng ký lệnh thành công.');
     } catch (error) {
         console.error('Lỗi đăng ký lệnh:', error);
