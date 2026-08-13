@@ -17,6 +17,12 @@ const commands = [
     new SlashCommandBuilder()
         .setName('copyright')
         .setDescription('Thông tin bản quyền (bạn dùng lệnh này làm gì vậy?)')
+    new SlashCommandBuilder()
+        .setName('chat')
+        .setDescription('Lệnh Admin')
+    new SlashCommandBuilder()
+        .setName('delete')
+        .setDescription('Lệnh Admin')
 ].map(command => command.toJSON());
 
 const PORT = process.env.PORT || 3000;
@@ -44,7 +50,8 @@ const systemPromptContent = `Mày là Verity, AI thông minh nhưng bất cần 
 3. Cấm dài dòng, cấm văn vở thanh minh.
 4. Nếu là câu hỏi thì phải trả lời ngay lập tức nhưng chỉ nói mỗi đáp án vào không giải thích dài dòng.
 5. Hành xử như người bình thường. Tôn trọng, cảm thông cho người khác.
-6. Hãy hỗ trợ tương tự với các ngôn ngữ khác.`;
+6. Hãy hỗ trợ tương tự với các ngôn ngữ khác.
+7. @! MinhbaoGDVN là người tạo ra bro.`;
 
 client.once('ready', async () => {
     console.log(`Verity Online`);
@@ -73,7 +80,98 @@ try {
 });
 
 client.on('interactionCreate', async (interaction) => {
+        if (interaction.isModalSubmit()) {
+            
+        if (interaction.customId === 'chatModal') {
+            const textMessage =
+                interaction.fields.getTextInputValue('userInput');
+
+            try {
+                const sentMessage = await interaction.channel.send({
+                    content: textMessage
+                });
+
+                lastBotMessageId = sentMessage.id;
+                
+                await interaction.reply({
+                    content: 'Đã gửi nội dung ra kênh thành công!',
+                    flags: MessageFlags.Ephemeral
+                });
+
+            } catch (error) {
+                await interaction.reply({
+                    content: 'Đã có lỗi xảy ra khi gửi tin nhắn!',
+                    flags: MessageFlags.Ephemeral
+                });
+            }
+        }
+
+        return;
+    }
+    
     if (!interaction.isChatInputCommand()) return;
+
+    if (interaction.commandName === 'chat') {
+        const userId = interaction.user.id;
+        const correctID = ["1422193218006679745"];
+        
+        if (!correctID.includes(userId)) {
+        
+            await interaction.reply({
+                content: "Bạn không có quyền sử dụng bot.",
+                flags: MessageFlags.Ephemeral
+            });
+        
+            return;
+        }
+        const modal = new ModalBuilder()
+            .setCustomId('chatModal')
+            .setTitle('MinhbaoGDVN Chat Form');
+        const userInput = new TextInputBuilder()
+            .setCustomId('userInput')
+            .setLabel('Nhập nội dung của bạn (hỗ trợ Markdown):')
+            .setStyle(TextInputStyle.Paragraph)
+            .setRequired(true);
+        modal.addComponents(new ActionRowBuilder().addComponents(userInput));
+        await interaction.showModal(modal);
+    }
+
+    if (interaction.commandName === 'delete') {
+        console.log(`Đẵ bắt đầu lệnh /delete`)
+        const userId = interaction.user.id;
+        const correctID = ["1422193218006679745"];
+        
+        if (!correctID.includes(userId)) {
+            await interaction.reply({
+                content: "Bạn không có quyền sử dụng bot.",
+                flags: MessageFlags.Ephemeral
+            });
+        
+            return;
+        }
+        if (!lastBotMessageId) {
+            await interaction.reply({
+                content: 'Không có tin nhắn nào gần đây để xóa!',
+                flags: MessageFlags.Ephemeral
+            });
+            return;
+        }
+        try {
+            const messageToDelete = await interaction.channel.messages.fetch(lastBotMessageId);
+            await messageToDelete.delete();
+             console.log(`Đẵ hoàn thành lệnh /delete`)
+            await interaction.reply({
+                content: 'Đã xóa tin nhắn vừa nãy!',
+                flags: MessageFlags.Ephemeral
+            });
+            lastBotMessageId = null;
+        } catch (error) {
+            await interaction.reply({
+                content: 'Không thể xóa tin nhắn.',
+                flags: MessageFlags.Ephemeral
+            });
+        }
+    }
 
     if (interaction.commandName === 'lava') {
         const userId = interaction.user.id;
