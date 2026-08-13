@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, ActivityType, SlashCommandBuilder, REST, Routes } = require('discord.js');
+const { Client, GatewayIntentBits, ActivityType, SlashCommandBuilder, REST, Routes, ModalBuilder  } = require('discord.js');
 const { Groq } = require('groq-sdk');
 const { GoogleGenAI } = require('@google/genai');
 const http = require('http');
