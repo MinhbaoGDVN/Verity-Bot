@@ -43,12 +43,12 @@ const systemPromptContent = `Mày là Verity, AI thông minh nhưng bất cần 
 client.once('ready', async () => {
     console.log(`Verity Online`);
     
-    try {
-        const guildId = '1417113255738085408';
-        const rest = new require('discord.js').REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
+try {
+        const guildId = 'ID_SERVER_CUA_BRO'; // Thay ID server của bro vào đây
+        const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
         
         await rest.put(
-            require('discord.js').Routes.applicationGuildCommands(client.user.id, guildId),
+            Routes.applicationGuildCommands(client.user.id, guildId),
             { body: [lavaCommand.toJSON()] },
         );
         console.log('Đã đăng ký thành công lệnh /lava!');
@@ -64,11 +64,6 @@ client.once('ready', async () => {
         status: 'online'
     });
     
-    try {
-        const channel = await client.channels.fetch('1519192818332073984');
-        if (channel) {
-            channel.send("Hello, I'm Verity, Your personal helper friend. Ask me anything. I know everything.");
-        }
     } catch (error) {
         console.error("Không tìm thấy kênh:", error);
     }
