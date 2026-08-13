@@ -13,7 +13,6 @@ const commands = [
     new SlashCommandBuilder()
         .setName('lava')
         .setDescription('Ném Verity xuống lava'),
-    
     new SlashCommandBuilder()
         .setName('copyright')
         .setDescription('Thông tin bản quyền (bạn dùng lệnh này làm gì vậy?)'),
