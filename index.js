@@ -55,6 +55,8 @@ const systemPromptContent = `Mày là Verity, AI thông minh nhưng bất cần 
 
 client.once('ready', async () => {
     console.log(`Verity Online`);
+    console.log(`Bot: ${client.user.tag}`);
+    console.log(`Application ID: ${client.application.id}`);
     
 try {
         const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
