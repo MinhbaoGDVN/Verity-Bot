@@ -1,6 +1,7 @@
 const { Client, GatewayIntentBits, ActivityType, SlashCommandBuilder, REST, Routes } = require('discord.js');
 const { Groq } = require('groq-sdk');
 const { GoogleGenAI } = require('@google/genai');
+const clientID = 1537099276327587880
 const http = require('http');
 require('dotenv').config();
 
@@ -57,7 +58,6 @@ client.once('ready', async () => {
     
 try {
         const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
-        const clientID = 1537099276327587880
         
         await rest.put(
             Routes.applicationCommands(clientId),
