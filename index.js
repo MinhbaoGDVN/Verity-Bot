@@ -1,7 +1,6 @@
 const { Client, GatewayIntentBits, ActivityType, SlashCommandBuilder, REST, Routes } = require('discord.js');
 const { Groq } = require('groq-sdk');
 const { GoogleGenAI } = require('@google/genai');
-const clientId = '1537099276327587880';
 const http = require('http');
 require('dotenv').config();
 
@@ -53,19 +52,20 @@ const systemPromptContent = `Mày là Verity, AI thông minh nhưng bất cần 
 6. Hãy hỗ trợ tương tự với các ngôn ngữ khác.
 7. @! MinhbaoGDVN là người tạo ra bro.`;
 
-client.once('ready', async () => {
+client.once('clientReady', async () => {
     console.log(`Verity Online`);
     console.log(`Bot: ${client.user.tag}`);
     console.log(`Application ID: ${client.application.id}`);
-    
-try {
-        const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
-        
+
+    try {
+        const rest = new REST({ version: '10' })
+            .setToken(process.env.DISCORD_TOKEN);
+
         await rest.put(
-            Routes.applicationCommands(clientId),
-            { body: commands },
+            Routes.applicationCommands(client.application.id),
+            { body: commands }
         );
-    
+
         console.log('Đã đăng ký lệnh thành công.');
     } catch (error) {
         console.error('Lỗi đăng ký lệnh:', error);
