@@ -50,11 +50,10 @@ client.once('ready', async () => {
     console.log(`Verity Online`);
     
 try {
-        const guildId = '1417113255738085408';
         const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
         
         await rest.put(
-            Routes.applicationGuildCommands(client.user.id, guildId),
+            Routes.applicationCommands(clientId),
             { body: commands },
         );
         console.log('Đã đăng ký lệnh thành công.');
