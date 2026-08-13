@@ -44,7 +44,7 @@ client.once('ready', async () => {
     console.log(`Verity Online`);
     
 try {
-        const guildId = 'ID_SERVER_CUA_BRO'; // Thay ID server của bro vào đây
+        const guildId = '1417113255738085408';
         const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
         
         await rest.put(
