@@ -10,6 +10,10 @@ const server = http.createServer((req, res) => {
     res.end('Verity Bot Online\nNếu lỗi vui lòng liên hệ @MinhbaoGDVN');
 });
 
+const lavaCommand = new SlashCommandBuilder()
+    .setName('lava')
+    .setDescription('Ném Verity xuống lava');
+
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`HTTP Server đang chạy trên cổng ${PORT}`);
@@ -57,6 +61,39 @@ client.once('ready', async () => {
         }
     } catch (error) {
         console.error("Không tìm thấy kênh:", error);
+    }
+});
+
+client.on('interactionCreate', async (interaction) => {
+    if (!interaction.isChatInputCommand()) return;
+
+    if (interaction.commandName === 'lava') {
+        const userId = interaction.user.id;
+        const now = Date.now();
+        const cooldownAmount = 60 * 1000;
+
+        if (lavaCooldowns.has(userId)) {
+            const expirationTime = lavaCooldowns.get(userId) + cooldownAmount;
+
+            if (now < expirationTime) {
+                const timeLeft = (expirationTime - now) / 1000;
+                return interaction.reply({ 
+                    content: `Từ từ đã bro, đợi thêm ${timeLeft.toFixed(1)} giây nữa mới dùng lại được lệnh /lava.`, 
+                    ephemeral: true 
+                });
+            }
+        }
+
+        lavaCooldowns.set(userId, now);
+        setTimeout(() => lavaCooldowns.delete(userId), cooldownAmount);
+        
+        const username = interaction.user.username;
+        
+        await interaction.reply(`${username} Đã ném Verity xuống lava.`);
+        
+        if (userHistories.has(userId)) {
+            userHistories.delete(userId);
+        }
     }
 });
 
