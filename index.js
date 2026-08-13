@@ -63,10 +63,6 @@ try {
         }],
         status: 'online'
     });
-    
-    } catch (error) {
-        console.error("Không tìm thấy kênh:", error);
-    }
 });
 
 client.on('interactionCreate', async (interaction) => {
