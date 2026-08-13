@@ -12,7 +12,7 @@ const server = http.createServer((req, res) => {
 const commands = [
     new SlashCommandBuilder()
         .setName('lava')
-        .setDescription('Ném Verity xuống lava')
+        .setDescription('Ném Verity xuống lava'),
     
     new SlashCommandBuilder()
         .setName('copyright')
