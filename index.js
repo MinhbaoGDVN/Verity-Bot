@@ -9,9 +9,15 @@ const server = http.createServer((req, res) => {
     res.end('Verity Bot Online\nNếu lỗi vui lòng liên hệ @MinhbaoGDVN');
 });
 
-const lavaCommand = new SlashCommandBuilder()
-    .setName('lava')
-    .setDescription('Ném Verity xuống lava');
+const commands = [
+    new SlashCommandBuilder()
+        .setName('lava')
+        .setDescription('Ném Verity xuống lava');
+    
+    new SlashCommandBuilder()
+        .setName('copyright')
+        .setDescription('Thông tin bản quyền (bạn dùng lệnh này làm gì vậy?)');
+].map(command => command.toJSON());
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
@@ -49,9 +55,9 @@ try {
         
         await rest.put(
             Routes.applicationGuildCommands(client.user.id, guildId),
-            { body: [lavaCommand.toJSON()] },
+            { body: commands },
         );
-        console.log('Đã đăng ký thành công lệnh /lava!');
+        console.log('Đã đăng ký lệnh thành công.');
     } catch (error) {
         console.error('Lỗi đăng ký lệnh:', error);
     }
@@ -91,11 +97,17 @@ client.on('interactionCreate', async (interaction) => {
         const username = interaction.user.username;
         const displayName = interaction.member ? interaction.member.displayName : interaction.user.username;
         
-        await interaction.reply(`${displayName}(${username}) Đã ném Verity xuống lava.`);
+        await interaction.reply(`@${displayName} (${username}) Đã ném Verity xuống lava.`);
         
         if (userHistories.has(userId)) {
             userHistories.delete(userId);
         }
+    }
+    if (interaction.commandName === 'copyright') {
+        return interaction.reply({ 
+            content: `© Copyright 2026 for MinhbaoGDVN. All rights reserved.`,
+            ephemeral: true 
+        });
     }
 });
 
