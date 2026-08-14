@@ -25,6 +25,9 @@ const commands = [
     new SlashCommandBuilder()
         .setName('delete')
         .setDescription('Lệnh Admin')
+    new SlashCommandBuilder()
+        .setName('sourcecode')
+        .setDescription('Mã nguồn mở (bạn dùng lệnh này làm gì vậy?)')
 ].map(command => command.toJSON());
 
 const PORT = process.env.PORT || 3000;
@@ -113,6 +116,13 @@ client.on('interactionCreate', async (interaction) => {
     }
     
     if (!interaction.isChatInputCommand()) return;
+
+     if (interaction.commandName === 'sourcecode') {
+            await interaction.reply({
+                content: 'https://github.com/MinhbaoGDVN/Verity-Bot',
+                flags: MessageFlags.Ephemeral
+            });
+    }
 
     if (interaction.commandName === 'chat') {
         const userId = interaction.user.id;
