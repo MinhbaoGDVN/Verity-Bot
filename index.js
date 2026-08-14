@@ -11,7 +11,7 @@ const server = http.createServer((req, res) => {
     res.end('vào đây làm cái j');
 });
 
-const userDepTrai = [`1025281361025703936, 1422193218006679745`]
+const userDepTrai = [`1025281361025703936`]
 const userAdmin = [`1422193218006679745`]
 
 const commands = [
@@ -67,7 +67,7 @@ Mô tả server: Đây là sv discord thân thiện! Nơi giao lưu bóng đá,g
 Owner: Justanormalvillager 
 Bối cảnh server: Dân làng Minecraft
 Thông tin về Owner: Justanormalvillager là Youtuber Việt Nam với vẻ bề ngoài là 1 dân làng MInecraft. Anh ấy tạo ra các video hay, gây cười, đu trend và Gen-Z bằng các video xoay quanh Verity và bóng đá.
-Các admin server (Bao gồm nhiều Role khác nhau): Deo, Justanormalvillager, Hamori, Thiên Gia Thánh Tử, Low cortisol, depzaii |APP|
+Các admin server (Bao gồm nhiều Role khác nhau), trong ngoặc kép là tên: "Deo", "Justanormalvillager", "Hamori", "Thiên Gia Thánh Tử", "Low cortisol", "depzaii |APP|", HẾT
 
 Q&A: 
 Emerald có thế nào? -> Hoạt động và tham gia Event trong server.
@@ -154,6 +154,10 @@ client.on('interactionCreate', async (interaction) => {
 
         if (userDepTrai.includes(target.id)) {
             rate = Math.max(1, rate - 20);
+        }
+
+        if (userAdmin.includes(target.id)) {
+            rate = Math.max(1, rate - 30);
         }
     
         let result;
