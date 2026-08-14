@@ -29,7 +29,7 @@ const commands = [
         .setDescription('Lệnh Admin'),
     new SlashCommandBuilder()
         .setName('sourcecode')
-        .setDescription('Mã nguồn mở (bạn dùng lệnh này làm gì vậy?)')
+        .setDescription('Mã nguồn mở (bạn dùng lệnh này làm gì vậy?)'),
     new SlashCommandBuilder()
     .setName('bellrate')
     .setDescription('Đo độ béo của một người')
