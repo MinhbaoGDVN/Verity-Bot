@@ -252,8 +252,6 @@ client.on('interactionCreate', async (interaction) => {
 const GROX_ID = '1537099276327587880';
 
 client.on('messageCreate', async (message) => {
-    if (message.author.bot) return;
-    
      if (message.author.bot && message.author.id !== GROX_ID) return;
     
     if (
@@ -266,6 +264,7 @@ client.on('messageCreate', async (message) => {
          return;
     }
 
+    if (message.author.bot) return;
     
     const botMention1 = `<@${client.user.id}>`;
     const botMention2 = `<@!${client.user.id}>`;
