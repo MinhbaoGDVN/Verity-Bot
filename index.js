@@ -11,7 +11,7 @@ const server = http.createServer((req, res) => {
     res.end('vào đây làm cái j');
 });
 
-const userDepTrai = [`1025281361025703936`]
+const userDepTrai = [`1025281361025703936, 1422193218006679745`]
 const userAdmin = [`1422193218006679745`]
 
 const commands = [
