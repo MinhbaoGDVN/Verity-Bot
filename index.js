@@ -4,13 +4,15 @@ const { GoogleGenAI } = require('@google/genai');
 const http = require('http');
 require('dotenv').config();
 
+let lastBotMessageId = null;
+
 const server = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
     res.end('vào đây làm cái j');
 });
 
 const userDepTrai = []
-const userAdmin = [1422193218006679745]
+const userAdmin = [`1422193218006679745`]
 
 const commands = [
     new SlashCommandBuilder()
@@ -24,7 +26,7 @@ const commands = [
         .setDescription('Lệnh Admin'),
     new SlashCommandBuilder()
         .setName('delete')
-        .setDescription('Lệnh Admin')
+        .setDescription('Lệnh Admin'),
     new SlashCommandBuilder()
         .setName('sourcecode')
         .setDescription('Mã nguồn mở (bạn dùng lệnh này làm gì vậy?)')
@@ -190,13 +192,14 @@ client.on('interactionCreate', async (interaction) => {
         const userId = interaction.user.id;
         const now = Date.now();
         
-        const cooldownAmount = 300 * 1000;
-        if (userId == userDepTrai) {
-            cooldownAmount = 60*1000
+        let cooldownAmount = 300 * 1000;
+        
+        if (userDepTrai.includes(userId)) {
+            cooldownAmount = 60 * 1000;
         }
         
-        if (userId == userAdmin) {
-            cooldownAmount = 30*1000
+        if (userAdmin.includes(userId)) {
+            cooldownAmount = 30 * 1000;
         }
 
         if (lavaCooldowns.has(userId)) {
