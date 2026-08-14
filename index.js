@@ -30,6 +30,15 @@ const commands = [
     new SlashCommandBuilder()
         .setName('sourcecode')
         .setDescription('Mã nguồn mở (bạn dùng lệnh này làm gì vậy?)')
+    new SlashCommandBuilder()
+    .setName('bellrate')
+    .setDescription('Đo độ béo của một người')
+    .addUserOption(option =>
+        option
+            .setName('user')
+            .setDescription('Người muốn đo độ béo')
+            .setRequired(false)
+    ),
 ].map(command => command.toJSON());
 
 const PORT = process.env.PORT || 3000;
@@ -140,6 +149,31 @@ client.on('interactionCreate', async (interaction) => {
     }
     
     if (!interaction.isChatInputCommand()) return;
+    if (interaction.commandName === 'bellrate') {
+        const target = interaction.options.getUser('user') || interaction.user;
+    
+        const rate = Math.floor(Math.random() * 100) + 1;
+    
+        let result;
+    
+        if (rate === 100) {
+            result = 'SIÊU BÉO';
+        } else if (rate >= 90) {
+            result = 'Cực kỳ béo';
+        } else if (rate >= 70) {
+            result = 'Khá béo';
+        } else if (rate >= 40) {
+            result = 'Béo vừa phải';
+        } else if (rate >= 10) {
+            result = 'Hơi gầy';
+        } else {
+            result = 'Gần như không béo';
+        }
+    
+        await interaction.reply(
+            `${target} có độ béo: **${rate}%**\nMức độ: **${result}**.`
+        );
+    }
 
      if (interaction.commandName === 'sourcecode') {
             await interaction.reply({
