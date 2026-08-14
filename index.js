@@ -249,13 +249,13 @@ client.on('interactionCreate', async (interaction) => {
         });
     }
 });
-const GROX_ID = '1537099276327587880';
+const GROX_ID = ['1025281361025703936', '1537099276327587880'];
 
 client.on('messageCreate', async (message) => {
      if (message.author.bot && message.author.id !== GROX_ID) return;
     
     if (
-        message.author.id === GROX_ID &&
+        GROX_ID.includes(message.author.id) &&
         message.content.trim() === '🔫'
     ) {
         await message.channel.send('Verity đã bị dân chủ bởi GroxMC.');
