@@ -68,12 +68,27 @@ client.once('clientReady', async () => {
         const rest = new REST({ version: '10' })
             .setToken(process.env.DISCORD_TOKEN);
 
+        // Xóa toàn bộ Guild Commands cũ
+        for (const [guildId] of client.guilds.cache) {
+            await rest.put(
+                Routes.applicationGuildCommands(
+                    client.application.id,
+                    guildId
+                ),
+                { body: [] }
+            );
+
+            console.log(`Đã xóa Guild Commands cũ: ${guildId}`);
+        }
+
+        // Đăng ký Global Commands
         await rest.put(
             Routes.applicationCommands(client.application.id),
             { body: commands }
         );
 
-        console.log('Đã đăng ký lệnh thành công.');
+        console.log('Đã đăng ký Global Commands thành công.');
+
     } catch (error) {
         console.error('Lỗi đăng ký lệnh:', error);
     }
