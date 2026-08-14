@@ -258,7 +258,7 @@ client.on('messageCreate', async (message) => {
         message.author.id === GROX_ID &&
         message.content.trim() === '🔫'
     ) {
-        await message.channel.send('Grok đã dân chủ Verity.');
+        await message.channel.send('Verity đã bị dân chủ bởi GroxMC.');
 
         userHistories.delete(message.author.id);
          return;
