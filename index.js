@@ -84,7 +84,6 @@ client.once('clientReady', async () => {
         const rest = new REST({ version: '10' })
             .setToken(process.env.DISCORD_TOKEN);
 
-        // Xóa toàn bộ Guild Commands cũ
         for (const [guildId] of client.guilds.cache) {
             await rest.put(
                 Routes.applicationGuildCommands(
@@ -97,7 +96,6 @@ client.once('clientReady', async () => {
             console.log(`Đã xóa Guild Commands cũ: ${guildId}`);
         }
 
-        // Đăng ký Global Commands
         await rest.put(
             Routes.applicationCommands(client.application.id),
             { body: commands }
@@ -152,7 +150,11 @@ client.on('interactionCreate', async (interaction) => {
     if (interaction.commandName === 'bellrate') {
         const target = interaction.options.getUser('user') || interaction.user;
     
-        const rate = Math.floor(Math.random() * 100) + 1;
+        let rate = Math.floor(Math.random() * 100) + 1;
+
+        if (userDepTrai.includes(target.id)) {
+            rate = Math.max(1, rate - 20);
+        }
     
         let result;
     
@@ -165,7 +167,7 @@ client.on('interactionCreate', async (interaction) => {
         } else if (rate >= 40) {
             result = 'Béo vừa phải';
         } else if (rate >= 10) {
-            result = 'Hơi gầy';
+            result = 'Hơi béo';
         } else {
             result = 'Gần như không béo';
         }
