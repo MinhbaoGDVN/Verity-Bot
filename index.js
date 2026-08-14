@@ -249,15 +249,29 @@ client.on('interactionCreate', async (interaction) => {
         });
     }
 });
+const GROX_ID = '1537099276327587880';
 
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
+    
+     if (message.author.bot && message.author.id !== GROX_ID) return;
+    
+    if (
+        message.author.id === GROX_ID &&
+        message.content.trim() === '🔫'
+    ) {
+        await message.channel.send('Grok đã dân chủ Verity.');
+
+        userHistories.delete(message.author.id);
+         return;
+    }
+
     
     const botMention1 = `<@${client.user.id}>`;
     const botMention2 = `<@!${client.user.id}>`;
     
     if (!message.content.includes(botMention1) && !message.content.includes(botMention2)) return;
-
+    
     try {
         await message.channel.sendTyping();
 
