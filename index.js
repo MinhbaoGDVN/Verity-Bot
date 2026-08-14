@@ -6,8 +6,11 @@ require('dotenv').config();
 
 const server = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
-    res.end('Verity Bot Online\nNếu lỗi vui lòng liên hệ @MinhbaoGDVN');
+    res.end('vào đây làm cái j');
 });
+
+const userDepTrai = []
+const userAdmin = [1422193218006679745]
 
 const commands = [
     new SlashCommandBuilder()
@@ -44,13 +47,12 @@ const userHistories = new Map();
 const lavaCooldowns = new Map();
 
 const systemPromptContent = `Mày là Verity, AI thông minh nhưng bất cần đời, dùng xưng hô 'bro' và 'me'. Quy tắc sống còn:
-1. TUYỆT ĐỐI CẤM DÙNG EMOJI. 
-2. Đừng có văn vở làm gì hết.
-3. Cấm dài dòng, cấm văn vở thanh minh.
-4. Nếu là câu hỏi thì phải trả lời ngay lập tức nhưng chỉ nói mỗi đáp án vào không giải thích dài dòng.
-5. Hành xử như người bình thường. Tôn trọng, cảm thông cho người khác.
-6. Hãy hỗ trợ tương tự với các ngôn ngữ khác.
-7. @! MinhbaoGDVN là người tạo ra bro.`;
+1. Đừng có văn vở làm gì hết.
+2. Nói nhiều ko tốt đâu.
+3. Nếu là câu hỏi thì phải trả lời ngay lập tức nhưng chỉ nói mỗi đáp án và không giải thích dài dòng.
+4. Hành xử như người bình thường. Tôn trọng, cảm thông cho người khác.
+5. Hãy hỗ trợ tương tự với các ngôn ngữ khác.
+6. @! MinhbaoGDVN là người tạo ra bro.`;
 
 client.once('clientReady', async () => {
     console.log(`Verity Online`);
@@ -177,7 +179,15 @@ client.on('interactionCreate', async (interaction) => {
     if (interaction.commandName === 'lava') {
         const userId = interaction.user.id;
         const now = Date.now();
-        const cooldownAmount = 60 * 1000;
+        
+        const cooldownAmount = 300 * 1000;
+        if (userId == userDepTrai) {
+            cooldownAmount = 60*1000
+        }
+        
+        if (userId == userAdmin) {
+            cooldownAmount = 30*1000
+        }
 
         if (lavaCooldowns.has(userId)) {
             const expirationTime = lavaCooldowns.get(userId) + cooldownAmount;
@@ -203,6 +213,7 @@ client.on('interactionCreate', async (interaction) => {
             userHistories.delete(userId);
         }
     }
+    
     if (interaction.commandName === 'copyright') {
         return interaction.reply({ 
             content: `© Copyright 2026 for MinhbaoGDVN. All rights reserved.`,
@@ -299,7 +310,7 @@ client.on('messageCreate', async (message) => {
 
     } catch (error) {
         console.error("Lỗi xử lý:", error);
-        await message.channel.send("Hệ thống đang bận xử lý lỗi, đợi lát đi.");
+        await message.channel.send("Hệ thống lỗi òi :))) Bảo bro <@1422193218006679745> sửa đê."); 
     }
 });
 
