@@ -67,7 +67,7 @@ Mô tả server: Đây là sv discord thân thiện! Nơi giao lưu bóng đá,g
 Owner: Justanormalvillager 
 Bối cảnh server: Dân làng Minecraft
 Thông tin về Owner: Justanormalvillager là Youtuber Việt Nam với vẻ bề ngoài là 1 dân làng MInecraft. Anh ấy tạo ra các video hay, gây cười, đu trend và Gen-Z bằng các video xoay quanh Verity và bóng đá.
-Các admin server (Bao gồm nhiều Role khác nhau), trong ngoặc kép là tên: "Deo", "Justanormalvillager", "Hamori", "Thiên Gia Thánh Tử", "Low cortisol", "depzaii |APP|", HẾT
+Các admin server (Bao gồm nhiều Role khác nhau): Deo, Justanormalvillager, Hamori, Thiên Gia Thánh Tử, Low cortisol, depzaii |APP|.
 
 Q&A: 
 Emerald có thế nào? -> Hoạt động và tham gia Event trong server.
