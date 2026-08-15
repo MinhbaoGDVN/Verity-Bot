@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, ActivityType, SlashCommandBuilder, REST, Routes, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, MessageFlags  } = require('discord.js');
+const { Client, GatewayIntentBits, ActivityType, SlashCommandBuilder, REST, Routes, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, MessageFlags, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { Groq } = require('groq-sdk');
 const { GoogleGenAI } = require('@google/genai');
 const http = require('http');
@@ -39,6 +39,14 @@ const commands = [
             .setName('user')
             .setDescription('Người muốn đo độ béo')
             .setRequired(false)
+    ),
+    new SlashCommandBuilder()
+    .setName('tank')
+    .setDescription('Quản lý xe tăng')
+    .addSubcommand(subcommand =>
+        subcommand
+            .setName('new')
+            .setDescription('Tạo một xe tăng mới')
     ),
 ].map(command => command.toJSON());
 
@@ -118,8 +126,96 @@ client.once('clientReady', async () => {
 });
 
 client.on('interactionCreate', async (interaction) => {
-        if (interaction.isModalSubmit()) {
-            
+    if (interaction.isModalSubmit()) {
+
+if (interaction.customId === 'tankTargetModal') {
+        const input = interaction.fields
+            .getTextInputValue('tankTargetInput')
+            .trim();
+
+        let targetMember = null;
+
+        try {
+            // 1. Discord Mention: <@123456789>
+            //    hoặc <@!123456789>
+            const mentionMatch = input.match(/^<@!?(\d+)>$/);
+
+            if (mentionMatch) {
+                targetMember = await interaction.guild.members
+                    .fetch(mentionMatch[1])
+                    .catch(() => null);
+            }
+
+            // 2. User ID
+            if (!targetMember && /^\d{17,20}$/.test(input)) {
+                targetMember = await interaction.guild.members
+                    .fetch(input)
+                    .catch(() => null);
+            }
+
+            // 3. Username + Tag: verity#4369
+            if (!targetMember && /^.+#\d{4}$/.test(input)) {
+                const [username, discriminator] = input.split('#');
+
+                targetMember = interaction.guild.members.cache.find(
+                    member =>
+                        member.user.username.toLowerCase() === username.toLowerCase() &&
+                        member.user.discriminator === discriminator
+                );
+            }
+
+            // 4. Username: Verity
+            if (!targetMember) {
+                targetMember = interaction.guild.members.cache.find(
+                    member =>
+                        member.user.username.toLowerCase() === input.toLowerCase()
+                );
+            }
+
+            // 5. Display Name: Verity
+            if (!targetMember) {
+                targetMember = interaction.guild.members.cache.find(
+                    member =>
+                        member.displayName.toLowerCase() === input.toLowerCase()
+                );
+            }
+
+            // 6. Global Name
+            if (!targetMember) {
+                targetMember = interaction.guild.members.cache.find(
+                    member =>
+                        member.user.globalName &&
+                        member.user.globalName.toLowerCase() === input.toLowerCase()
+                );
+            }
+
+            if (!targetMember) {
+                await interaction.reply({
+                    content: `Không tìm thấy User \`${input}\` trong server.`,
+                    flags: MessageFlags.Ephemeral
+                });
+
+                return;
+            }
+
+            await interaction.reply(
+                `${targetMember} đã bị dân chủ bởi Verity bằng Xe Tăng.`
+            );
+
+        } catch (error) {
+            console.error('Lỗi tìm mục tiêu xe tăng:', error);
+
+            if (!interaction.replied) {
+                await interaction.reply({
+                    content: 'Có lỗi xảy ra khi tìm mục tiêu.',
+                    flags: MessageFlags.Ephemeral
+                });
+            }
+        }
+
+        return;
+    }
+     
         if (interaction.customId === 'chatModal') {
             const textMessage =
                 interaction.fields.getTextInputValue('userInput');
@@ -148,6 +244,51 @@ client.on('interactionCreate', async (interaction) => {
     }
     
     if (!interaction.isChatInputCommand()) return;
+    if (interaction.isButton()) {
+        if (interaction.customId === 'tankTarget') {
+            const modal = new ModalBuilder()
+                .setCustomId('tankTargetModal')
+                .setTitle('Chọn mục tiêu xe tăng');
+    
+            const targetInput = new TextInputBuilder()
+                .setCustomId('tankTargetInput')
+                .setLabel('Mục tiêu')
+                .setPlaceholder('@Verity')
+                .setStyle(TextInputStyle.Short)
+                .setRequired(true)
+                .setMaxLength(100);
+    
+            const row = new ActionRowBuilder()
+                .addComponents(targetInput);
+    
+            modal.addComponents(row);
+    
+            await interaction.showModal(modal);
+    
+            return;
+        }
+    }
+
+    if (
+        interaction.commandName === 'tank' &&
+        interaction.options.getSubcommand() === 'new'
+    ) {
+        const button = new ButtonBuilder()
+            .setCustomId('tankTarget')
+            .setLabel('Chọn mục tiêu')
+            .setStyle(ButtonStyle.Danger);
+    
+        const row = new ActionRowBuilder()
+            .addComponents(button);
+    
+        await interaction.reply({
+            content: 'Đã tạo xe tăng mới, vui lòng chọn mục tiêu',
+            components: [row]
+        });
+    
+        return;
+    }
+    
     if (interaction.commandName === 'bellrate') {
         const target = interaction.options.getUser('user') || interaction.user;
     
