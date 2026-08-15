@@ -132,73 +132,36 @@ client.on('interactionCreate', async (interaction) => {
             const input = interaction.fields
                 .getTextInputValue('tankTargetInput')
                 .trim();
-
-            let targetMember = null;
-
+        
+            if (!input) {
+                await interaction.reply({
+                    content: 'Vui lòng nhập Display Name của mục tiêu.',
+                    flags: MessageFlags.Ephemeral
+                });
+                return;
+            }
+        
             try {
-
-                const mentionMatch = input.match(/^<@!?(\d+)>$/);
-
-                if (mentionMatch) {
-                    targetMember = await interaction.guild.members
-                        .fetch(mentionMatch[1])
-                        .catch(() => null);
-                }
-
-                if (!targetMember && /^\d{17,20}$/.test(input)) {
-                    targetMember = await interaction.guild.members
-                        .fetch(input)
-                        .catch(() => null);
-                }
-
-                if (!targetMember && /^.+#\d{4}$/.test(input)) {
-                    const [username, discriminator] = input.split('#');
-
-                    targetMember = interaction.guild.members.cache.find(
-                        member =>
-                            member.user.username.toLowerCase() === username.toLowerCase() &&
-                            member.user.discriminator === discriminator
-                    );
-                }
-
-                if (!targetMember) {
-                    targetMember = interaction.guild.members.cache.find(
-                        member =>
-                            member.user.username.toLowerCase() === input.toLowerCase()
-                    );
-                }
-
-                if (!targetMember) {
-                    targetMember = interaction.guild.members.cache.find(
-                        member =>
-                            member.displayName.toLowerCase() === input.toLowerCase()
-                    );
-                }
-
-                if (!targetMember) {
-                    targetMember = interaction.guild.members.cache.find(
-                        member =>
-                            member.user.globalName &&
-                            member.user.globalName.toLowerCase() === input.toLowerCase()
-                    );
-                }
-
+                const targetMember = interaction.guild.members.cache.find(
+                    member =>
+                        member.displayName.toLowerCase() === input.toLowerCase()
+                );
+        
                 if (!targetMember) {
                     await interaction.reply({
-                        content: `Không tìm thấy User \`${input}\` trong server.`,
+                        content: `Không tìm thấy người dùng có Display Name \`${input}\` trong server.`,
                         flags: MessageFlags.Ephemeral
                     });
-
                     return;
                 }
-
+        
                 await interaction.reply(
                     `${targetMember} đã bị dân chủ bởi Verity bằng Xe Tăng.`
                 );
-
+        
             } catch (error) {
                 console.error('Lỗi tìm mục tiêu xe tăng:', error);
-
+        
                 if (!interaction.replied) {
                     await interaction.reply({
                         content: 'Có lỗi xảy ra khi tìm mục tiêu.',
@@ -206,7 +169,7 @@ client.on('interactionCreate', async (interaction) => {
                     });
                 }
             }
-
+        
             return;
         }
 
