@@ -150,14 +150,14 @@ client.on('interactionCreate', async (interaction) => {
     if (interaction.commandName === 'bellrate') {
         const target = interaction.options.getUser('user') || interaction.user;
     
-        let rate = Math.floor(Math.random() * 100) + 1;
+        let rate = Math.floor(Math.random() * 101);
 
         if (userDepTrai.includes(target.id)) {
-            rate = Math.max(1, rate - 20);
+            rate = Math.max(0, rate - 20);
         }
 
         if (userAdmin.includes(target.id)) {
-            rate = Math.max(1, rate - 30);
+            rate = Math.max(0, rate - 30);
         }
     
         let result;
@@ -172,8 +172,10 @@ client.on('interactionCreate', async (interaction) => {
             result = 'Béo vừa phải';
         } else if (rate >= 10) {
             result = 'Hơi béo';
-        } else {
+        } else if (rate >= 1){
             result = 'Gần như không béo';
+        } else {
+            result = 'Bình thường';
         }
     
         await interaction.reply(
