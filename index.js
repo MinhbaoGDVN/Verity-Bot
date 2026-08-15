@@ -151,17 +151,16 @@ client.on('interactionCreate', async (interaction) => {
         const target = interaction.options.getUser('user') || interaction.user;
     
         let rate = Math.floor(Math.random() * 101);
-
         if (userDepTrai.includes(target.id)) {
             rate = Math.max(0, rate - 20);
         }
-
+        
         if (userAdmin.includes(target.id)) {
             rate = Math.max(0, rate - 30);
         }
-    
+        
         let result;
-    
+        
         if (rate === 100) {
             result = 'SIÊU BÉO';
         } else if (rate >= 90) {
@@ -172,16 +171,27 @@ client.on('interactionCreate', async (interaction) => {
             result = 'Béo vừa phải';
         } else if (rate >= 10) {
             result = 'Hơi béo';
-        } else if (rate >= 1){
+        } else if (rate >= 1) {
             result = 'Gần như không béo';
         } else {
             result = 'Bình thường';
         }
-    
+        
+        if (rate === 100) {
+            const role = interaction.guild.roles.cache.find(
+                r => r.name === 'Siêu bell'
+            );
+        
+            if (role) {
+                await target.roles.add(role).catch(console.error);
+            }
+        }
+        
         await interaction.reply(
-            `${target} có độ béo: **${rate}%**\nMức độ: **${result}**\n\nĐăng ký Đẹp Trai miễn phí để giảm 20%. Đọc thêm tại tiểu sử.`
+            `${target} có độ béo: **${rate}%**\n` +
+            `Mức độ: **${result}**\n\n` +
+            `Đăng ký Đẹp Trai miễn phí để giảm 20%. Đọc thêm tại tiểu sử.`
         );
-    }
 
      if (interaction.commandName === 'sourcecode') {
             await interaction.reply({
