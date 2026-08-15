@@ -322,19 +322,33 @@ client.on('messageCreate', async (message) => {
         message.content.trim() === '🔫'
     ) {
         await message.channel.send('Verity đã bị dân chủ bởi GroxMC.');
-
-        userHistories.delete(message.author.id);
-         return;
-    }
     
-    if (
+        userHistories.delete(message.author.id);
+        return;
+    
+    } else if (
         userAdmin.includes(message.author.id) &&
         message.content.trim() === '🔫'
     ) {
         await message.channel.send('Verity đã bị dân chủ bởi MinhbaoGDVN.');
-
+    
         userHistories.delete(message.author.id);
-         return;
+        return;
+    
+    } else if (
+        userDepTrai.includes(message.author.id) &&
+        message.content.trim() === '🔫'
+    ) {
+        const displayName = message.member
+            ? message.member.displayName
+            : message.author.globalName || message.author.username;
+    
+        await message.channel.send(
+            `Verity đã bị dân chủ bởi ${displayName}.`
+        );
+    
+        userHistories.delete(message.author.id);
+        return;
     }
 
     if (message.author.bot) return;
@@ -385,6 +399,7 @@ QUY TẮC:
 8. Câu hỏi thì hãy chat MỖI ĐÁP ÁN VÀ KHÔNG CÓ GÌ NGOÀI ĐÁP ÁN.
 9. Trò chuyện như người thật, ko tiết lộ là AI
 10. Xưng hô với người dùng là là bạn/tôi.
+11. Người dùng là Gen-Z, nên sẽ có viết tắt như: v -> vậy, j -> gì, m -> mày, t -> tao/tôi, bn -> bạn,.v.v
 `;
         const promptText = message.content
             .replace(new RegExp(`<@!?${client.user.id}>`, 'g'), '')
