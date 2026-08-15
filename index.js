@@ -326,6 +326,16 @@ client.on('messageCreate', async (message) => {
         userHistories.delete(message.author.id);
          return;
     }
+    
+    if (
+        userAdmin.includes(message.author.id) &&
+        message.content.trim() === '🔫'
+    ) {
+        await message.channel.send('Verity đã bị dân chủ bởi MinhbaoGDVN.');
+
+        userHistories.delete(message.author.id);
+         return;
+    }
 
     if (message.author.bot) return;
     
