@@ -198,6 +198,7 @@ client.on('interactionCreate', async (interaction) => {
                 content: 'https://github.com/MinhbaoGDVN/Verity-Bot',
                 flags: MessageFlags.Ephemeral
             });
+         }
     }
 
     if (interaction.commandName === 'chat') {
@@ -308,6 +309,7 @@ client.on('interactionCreate', async (interaction) => {
         });
     }
 });
+
 const GROX_ID = ['1025281361025703936', '1537099276327587880'];
 
 client.on('messageCreate', async (message) => {
