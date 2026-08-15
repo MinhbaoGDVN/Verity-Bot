@@ -11,7 +11,7 @@ const server = http.createServer((req, res) => {
     res.end('vào đây làm cái j');
 });
 
-const userDepTrai = [`1025281361025703936`,`1459504029641212131`]
+const userDepTrai = [`1025281361025703936`, `1459504029641212131`]
 const userAdmin = [`1422193218006679745`]
 const birthdayUser = [`1459504029641212131`]
 
@@ -32,22 +32,22 @@ const commands = [
         .setName('sourcecode')
         .setDescription('Mã nguồn mở (bạn dùng lệnh này làm gì vậy?)'),
     new SlashCommandBuilder()
-    .setName('bellrate')
-    .setDescription('Đo độ béo của một người')
-    .addUserOption(option =>
-        option
-            .setName('user')
-            .setDescription('Người muốn đo độ béo')
-            .setRequired(false)
-    ),
+        .setName('bellrate')
+        .setDescription('Đo độ béo của một người')
+        .addUserOption(option =>
+            option
+                .setName('user')
+                .setDescription('Người muốn đo độ béo')
+                .setRequired(false)
+        ),
     new SlashCommandBuilder()
-    .setName('tank')
-    .setDescription('Quản lý xe tăng')
-    .addSubcommand(subcommand =>
-        subcommand
-            .setName('new')
-            .setDescription('Tạo một xe tăng mới')
-    ),
+        .setName('tank')
+        .setDescription('Quản lý xe tăng')
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('new')
+                .setDescription('Tạo một xe tăng mới')
+        ),
 ].map(command => command.toJSON());
 
 const PORT = process.env.PORT || 3000;
@@ -128,94 +128,88 @@ client.once('clientReady', async () => {
 client.on('interactionCreate', async (interaction) => {
     if (interaction.isModalSubmit()) {
 
-if (interaction.customId === 'tankTargetModal') {
-        const input = interaction.fields
-            .getTextInputValue('tankTargetInput')
-            .trim();
+        if (interaction.customId === 'tankTargetModal') {
+            const input = interaction.fields
+                .getTextInputValue('tankTargetInput')
+                .trim();
 
-        let targetMember = null;
+            let targetMember = null;
 
-        try {
-            // 1. Discord Mention: <@123456789>
-            //    hoặc <@!123456789>
-            const mentionMatch = input.match(/^<@!?(\d+)>$/);
+            try {
 
-            if (mentionMatch) {
-                targetMember = await interaction.guild.members
-                    .fetch(mentionMatch[1])
-                    .catch(() => null);
-            }
+                const mentionMatch = input.match(/^<@!?(\d+)>$/);
 
-            // 2. User ID
-            if (!targetMember && /^\d{17,20}$/.test(input)) {
-                targetMember = await interaction.guild.members
-                    .fetch(input)
-                    .catch(() => null);
-            }
+                if (mentionMatch) {
+                    targetMember = await interaction.guild.members
+                        .fetch(mentionMatch[1])
+                        .catch(() => null);
+                }
 
-            // 3. Username + Tag: verity#4369
-            if (!targetMember && /^.+#\d{4}$/.test(input)) {
-                const [username, discriminator] = input.split('#');
+                if (!targetMember && /^\d{17,20}$/.test(input)) {
+                    targetMember = await interaction.guild.members
+                        .fetch(input)
+                        .catch(() => null);
+                }
 
-                targetMember = interaction.guild.members.cache.find(
-                    member =>
-                        member.user.username.toLowerCase() === username.toLowerCase() &&
-                        member.user.discriminator === discriminator
+                if (!targetMember && /^.+#\d{4}$/.test(input)) {
+                    const [username, discriminator] = input.split('#');
+
+                    targetMember = interaction.guild.members.cache.find(
+                        member =>
+                            member.user.username.toLowerCase() === username.toLowerCase() &&
+                            member.user.discriminator === discriminator
+                    );
+                }
+
+                if (!targetMember) {
+                    targetMember = interaction.guild.members.cache.find(
+                        member =>
+                            member.user.username.toLowerCase() === input.toLowerCase()
+                    );
+                }
+
+                if (!targetMember) {
+                    targetMember = interaction.guild.members.cache.find(
+                        member =>
+                            member.displayName.toLowerCase() === input.toLowerCase()
+                    );
+                }
+
+                if (!targetMember) {
+                    targetMember = interaction.guild.members.cache.find(
+                        member =>
+                            member.user.globalName &&
+                            member.user.globalName.toLowerCase() === input.toLowerCase()
+                    );
+                }
+
+                if (!targetMember) {
+                    await interaction.reply({
+                        content: `Không tìm thấy User \`${input}\` trong server.`,
+                        flags: MessageFlags.Ephemeral
+                    });
+
+                    return;
+                }
+
+                await interaction.reply(
+                    `${targetMember} đã bị dân chủ bởi Verity bằng Xe Tăng.`
                 );
+
+            } catch (error) {
+                console.error('Lỗi tìm mục tiêu xe tăng:', error);
+
+                if (!interaction.replied) {
+                    await interaction.reply({
+                        content: 'Có lỗi xảy ra khi tìm mục tiêu.',
+                        flags: MessageFlags.Ephemeral
+                    });
+                }
             }
 
-            // 4. Username: Verity
-            if (!targetMember) {
-                targetMember = interaction.guild.members.cache.find(
-                    member =>
-                        member.user.username.toLowerCase() === input.toLowerCase()
-                );
-            }
-
-            // 5. Display Name: Verity
-            if (!targetMember) {
-                targetMember = interaction.guild.members.cache.find(
-                    member =>
-                        member.displayName.toLowerCase() === input.toLowerCase()
-                );
-            }
-
-            // 6. Global Name
-            if (!targetMember) {
-                targetMember = interaction.guild.members.cache.find(
-                    member =>
-                        member.user.globalName &&
-                        member.user.globalName.toLowerCase() === input.toLowerCase()
-                );
-            }
-
-            if (!targetMember) {
-                await interaction.reply({
-                    content: `Không tìm thấy User \`${input}\` trong server.`,
-                    flags: MessageFlags.Ephemeral
-                });
-
-                return;
-            }
-
-            await interaction.reply(
-                `${targetMember} đã bị dân chủ bởi Verity bằng Xe Tăng.`
-            );
-
-        } catch (error) {
-            console.error('Lỗi tìm mục tiêu xe tăng:', error);
-
-            if (!interaction.replied) {
-                await interaction.reply({
-                    content: 'Có lỗi xảy ra khi tìm mục tiêu.',
-                    flags: MessageFlags.Ephemeral
-                });
-            }
+            return;
         }
 
-        return;
-    }
-     
         if (interaction.customId === 'chatModal') {
             const textMessage =
                 interaction.fields.getTextInputValue('userInput');
@@ -226,7 +220,7 @@ if (interaction.customId === 'tankTargetModal') {
                 });
 
                 lastBotMessageId = sentMessage.id;
-                
+
                 await interaction.reply({
                     content: 'Đã gửi nội dung ra kênh thành công!',
                     flags: MessageFlags.Ephemeral
@@ -242,14 +236,14 @@ if (interaction.customId === 'tankTargetModal') {
 
         return;
     }
-    
-    if (!interaction.isChatInputCommand()) return;
+
+
     if (interaction.isButton()) {
         if (interaction.customId === 'tankTarget') {
             const modal = new ModalBuilder()
                 .setCustomId('tankTargetModal')
                 .setTitle('Chọn mục tiêu xe tăng');
-    
+
             const targetInput = new TextInputBuilder()
                 .setCustomId('tankTargetInput')
                 .setLabel('Mục tiêu')
@@ -257,17 +251,19 @@ if (interaction.customId === 'tankTargetModal') {
                 .setStyle(TextInputStyle.Short)
                 .setRequired(true)
                 .setMaxLength(100);
-    
+
             const row = new ActionRowBuilder()
                 .addComponents(targetInput);
-    
+
             modal.addComponents(row);
-    
+
             await interaction.showModal(modal);
-    
+
             return;
         }
     }
+
+    if (!interaction.isChatInputCommand()) return;
 
     if (
         interaction.commandName === 'tank' &&
@@ -277,23 +273,25 @@ if (interaction.customId === 'tankTargetModal') {
             .setCustomId('tankTarget')
             .setLabel('Chọn mục tiêu')
             .setStyle(ButtonStyle.Danger);
-    
+
         const row = new ActionRowBuilder()
             .addComponents(button);
-    
+
         await interaction.reply({
             content: 'Đã tạo xe tăng mới, vui lòng chọn mục tiêu',
-            components: [row]
+            components: [row],
+            flags: MessageFlags.Ephemeral
+
         });
-    
+
         return;
     }
-    
+
     if (interaction.commandName === 'bellrate') {
         const target = interaction.options.getUser('user') || interaction.user;
-    
+
         let rate = Math.floor(Math.random() * 101);
-        
+
         if (userAdmin.includes(target.id)) {
             rate = Math.max(0, rate - 40);
         } else if (birthdayUser.includes(target.id)) {
@@ -301,9 +299,9 @@ if (interaction.customId === 'tankTargetModal') {
         } else if (userDepTrai.includes(target.id)) {
             rate = Math.max(0, rate - 20);
         }
-        
+
         let result;
-        
+
         if (rate === 100) {
             result = 'SIÊU BÉO';
         } else if (rate >= 90) {
@@ -319,42 +317,42 @@ if (interaction.customId === 'tankTargetModal') {
         } else {
             result = 'Bình thường';
         }
-        
+
         if (rate === 100) {
             const role = interaction.guild.roles.cache.find(
                 r => r.name === 'Siêu bell'
             );
-        
+
             if (role) {
                 await target.roles.add(role).catch(console.error);
             }
         }
-        
+
         await interaction.reply(
             `${target} có độ béo: **${rate}%**\n` +
             `Mức độ: **${result}**\n\n` +
             `Đăng ký Đẹp Trai miễn phí để giảm 20%. Đọc thêm tại tiểu sử.`
         );
 
-     if (interaction.commandName === 'sourcecode') {
+        if (interaction.commandName === 'sourcecode') {
             await interaction.reply({
                 content: 'https://github.com/MinhbaoGDVN/Verity-Bot',
                 flags: MessageFlags.Ephemeral
             });
-         }
+        }
     }
 
     if (interaction.commandName === 'chat') {
         const userId = interaction.user.id;
         const correctID = ["1422193218006679745"];
-        
+
         if (!correctID.includes(userId)) {
-        
+
             await interaction.reply({
                 content: "Bạn không có quyền sử dụng bot.",
                 flags: MessageFlags.Ephemeral
             });
-        
+
             return;
         }
         const modal = new ModalBuilder()
@@ -373,13 +371,13 @@ if (interaction.customId === 'tankTargetModal') {
         console.log(`Đẵ bắt đầu lệnh /delete`)
         const userId = interaction.user.id;
         const correctID = ["1422193218006679745"];
-        
+
         if (!correctID.includes(userId)) {
             await interaction.reply({
                 content: "Bạn không có quyền sử dụng bot.",
                 flags: MessageFlags.Ephemeral
             });
-        
+
             return;
         }
         if (!lastBotMessageId) {
@@ -392,7 +390,7 @@ if (interaction.customId === 'tankTargetModal') {
         try {
             const messageToDelete = await interaction.channel.messages.fetch(lastBotMessageId);
             await messageToDelete.delete();
-             console.log(`Đẵ hoàn thành lệnh /delete`)
+            console.log(`Đẵ hoàn thành lệnh /delete`)
             await interaction.reply({
                 content: 'Đã xóa tin nhắn vừa nãy!',
                 flags: MessageFlags.Ephemeral
@@ -409,13 +407,13 @@ if (interaction.customId === 'tankTargetModal') {
     if (interaction.commandName === 'lava') {
         const userId = interaction.user.id;
         const now = Date.now();
-        
+
         let cooldownAmount = 300 * 1000;
-        
+
         if (userDepTrai.includes(userId)) {
             cooldownAmount = 60 * 1000;
         }
-        
+
         if (userAdmin.includes(userId)) {
             cooldownAmount = 30 * 1000;
         }
@@ -425,30 +423,30 @@ if (interaction.customId === 'tankTargetModal') {
 
             if (now < expirationTime) {
                 const timeLeft = (expirationTime - now) / 1000;
-                return interaction.reply({ 
-                    content: `Từ từ đã bro, đợi thêm ${timeLeft.toFixed(1)} giây nữa mới dùng lại được lệnh /lava.`, 
-                    ephemeral: true 
+                return interaction.reply({
+                    content: `Từ từ đã bro, đợi thêm ${timeLeft.toFixed(1)} giây nữa mới dùng lại được lệnh /lava.`,
+                    ephemeral: true
                 });
             }
         }
 
         lavaCooldowns.set(userId, now);
         setTimeout(() => lavaCooldowns.delete(userId), cooldownAmount);
-        
+
         const username = interaction.user.username;
         const displayName = interaction.member ? interaction.member.displayName : interaction.user.username;
-        
+
         await interaction.reply(`@${displayName} (${username}) Đã ném Verity xuống lava.`);
-        
+
         if (userHistories.has(userId)) {
             userHistories.delete(userId);
         }
     }
-    
+
     if (interaction.commandName === 'copyright') {
-        return interaction.reply({ 
+        return interaction.reply({
             content: `© Copyright 2026 for MinhbaoGDVN. All rights reserved.`,
-            ephemeral: true 
+            ephemeral: true
         });
     }
 });
@@ -456,26 +454,26 @@ if (interaction.customId === 'tankTargetModal') {
 const GROX_ID = ['1025281361025703936', '1537099276327587880'];
 
 client.on('messageCreate', async (message) => {
-     if (message.author.bot && message.author.id !== GROX_ID) return;
-    
+    if (message.author.bot && message.author.id !== GROX_ID) return;
+
     if (
         GROX_ID.includes(message.author.id) &&
         message.content.trim() === '🔫'
     ) {
         await message.channel.send('Verity đã bị dân chủ bởi GroxMC.');
-    
+
         userHistories.delete(message.author.id);
         return;
-    
+
     } else if (
         userAdmin.includes(message.author.id) &&
         message.content.trim() === '🔫'
     ) {
         await message.channel.send('Verity đã bị dân chủ bởi MinhbaoGDVN.');
-    
+
         userHistories.delete(message.author.id);
         return;
-    
+
     } else if (
         userDepTrai.includes(message.author.id) &&
         message.content.trim() === '🔫'
@@ -483,22 +481,22 @@ client.on('messageCreate', async (message) => {
         const displayName = message.member
             ? message.member.displayName
             : message.author.globalName || message.author.username;
-    
+
         await message.channel.send(
             `Verity đã bị dân chủ bởi ${displayName}.`
         );
-    
+
         userHistories.delete(message.author.id);
         return;
     }
 
     if (message.author.bot) return;
-    
+
     const botMention1 = `<@${client.user.id}>`;
     const botMention2 = `<@!${client.user.id}>`;
-    
+
     if (!message.content.includes(botMention1) && !message.content.includes(botMention2)) return;
-    
+
     try {
         await message.channel.sendTyping();
 
@@ -506,8 +504,8 @@ client.on('messageCreate', async (message) => {
         const userInfo = {
             id: message.author.id,
             username: message.author.username,
-            displayName: message.member 
-                ? message.member.displayName 
+            displayName: message.member
+                ? message.member.displayName
                 : message.author.globalName || message.author.username
         };
         const userContext = `
@@ -516,7 +514,7 @@ client.on('messageCreate', async (message) => {
         Username: ${userInfo.username}
         Display Name: ${userInfo.displayName}
         `;
-const systemPromptContent = `
+        const systemPromptContent = `
 BỐI CẢNH SERVER:
 ${serverInfo}
 
@@ -549,8 +547,8 @@ QUY TẮC:
 
         if (!userHistories.has(userId)) {
             userHistories.set(userId, [
-                { 
-                    role: "system", 
+                {
+                    role: "system",
                     content: systemPromptContent + "\n\n" + userContext
                 }
             ]);
@@ -589,7 +587,7 @@ QUY TẮC:
             });
 
             replyText = geminiResponse.text || "Đọc kiểu gì khó hiểu thế.";
-            
+
             history.push({ role: "user", content: promptText || "[Đã gửi tệp đính kèm]" });
             history.push({ role: "assistant", content: replyText });
 
@@ -612,17 +610,17 @@ QUY TẮC:
             });
 
             replyText = completion.choices[0]?.message?.content || "Hỏi khó thế mà cũng phải hỏi, tự suy nghĩ đi chứ.";
-            
+
             history.push({ role: "assistant", content: replyText });
         }
-        
+
         replyText = replyText.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '').trim();
 
         await message.channel.send(replyText);
 
     } catch (error) {
         console.error("Lỗi xử lý:", error);
-        await message.channel.send("Hệ thống lỗi òi :))) Bảo bro <@1422193218006679745> sửa đê."); 
+        await message.channel.send("Hệ thống lỗi òi :))) Bảo bro <@1422193218006679745> sửa đê.");
     }
 });
 
