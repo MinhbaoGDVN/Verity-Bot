@@ -177,7 +177,7 @@ client.on('interactionCreate', async (interaction) => {
         }
     
         await interaction.reply(
-            `${target} có độ béo: **${rate}%**\nMức độ: **${result}**.`
+            `${target} có độ béo: **${rate}%**\nMức độ: **${result}**\n\nĐăng ký Đẹp Trai miễn phí để giảm 20%. Đọc thêm tại tiểu sử.`
         );
     }
 
