@@ -13,6 +13,7 @@ const server = http.createServer((req, res) => {
 
 const userDepTrai = [`1025281361025703936`,`1459504029641212131`]
 const userAdmin = [`1422193218006679745`]
+const birthdayUser = [`1459504029641212131`]
 
 const commands = [
     new SlashCommandBuilder()
@@ -151,12 +152,13 @@ client.on('interactionCreate', async (interaction) => {
         const target = interaction.options.getUser('user') || interaction.user;
     
         let rate = Math.floor(Math.random() * 101);
-        if (userDepTrai.includes(target.id)) {
-            rate = Math.max(0, rate - 20);
-        }
         
         if (userAdmin.includes(target.id)) {
+            rate = Math.max(0, rate - 40);
+        } else if (birthdayUser.includes(target.id)) {
             rate = Math.max(0, rate - 30);
+        } else if (userDepTrai.includes(target.id)) {
+            rate = Math.max(0, rate - 20);
         }
         
         let result;
