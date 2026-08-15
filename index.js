@@ -60,6 +60,7 @@ const client = new Client({
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMembers,
     ],
 });
 
@@ -133,18 +134,13 @@ client.on('interactionCreate', async (interaction) => {
                 .getTextInputValue('tankTargetInput')
                 .trim();
         
-            if (!input) {
-                await interaction.reply({
-                    content: 'Vui lòng nhập Display Name của mục tiêu.',
-                    flags: MessageFlags.Ephemeral
-                });
-                return;
-            }
-        
             try {
-                const targetMember = interaction.guild.members.cache.find(
+                const members = await interaction.guild.members.fetch();
+        
+                const targetMember = members.find(
                     member =>
-                        member.displayName.toLowerCase() === input.toLowerCase()
+                        member.displayName.trim().toLowerCase() ===
+                        input.trim().toLowerCase()
                 );
         
                 if (!targetMember) {
@@ -162,7 +158,7 @@ client.on('interactionCreate', async (interaction) => {
             } catch (error) {
                 console.error('Lỗi tìm mục tiêu xe tăng:', error);
         
-                if (!interaction.replied) {
+                if (!interaction.replied && !interaction.deferred) {
                     await interaction.reply({
                         content: 'Có lỗi xảy ra khi tìm mục tiêu.',
                         flags: MessageFlags.Ephemeral
@@ -172,33 +168,6 @@ client.on('interactionCreate', async (interaction) => {
         
             return;
         }
-
-        if (interaction.customId === 'chatModal') {
-            const textMessage =
-                interaction.fields.getTextInputValue('userInput');
-
-            try {
-                const sentMessage = await interaction.channel.send({
-                    content: textMessage
-                });
-
-                lastBotMessageId = sentMessage.id;
-
-                await interaction.reply({
-                    content: 'Đã gửi nội dung ra kênh thành công!',
-                    flags: MessageFlags.Ephemeral
-                });
-
-            } catch (error) {
-                await interaction.reply({
-                    content: 'Đã có lỗi xảy ra khi gửi tin nhắn!',
-                    flags: MessageFlags.Ephemeral
-                });
-            }
-        }
-
-        return;
-    }
 
 
     if (interaction.isButton()) {
