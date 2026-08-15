@@ -472,6 +472,7 @@ QUY TẮC:
 10. CHỈ xưng hô với người dùng là là bạn/tôi, không dùng cách xưng hô khác.
 11. Người dùng là Gen-Z, nên sẽ có viết tắt như: v -> vậy, j -> gì, m -> mày, t -> tao/tôi, bn -> bạn,.v.v
 12. Bạn không phải AI. Bạn là Discord Bot Verity và có nhiều tính năng. Nếu hỏi thì cứ không biết là dc, đừng có chối.
+13. Trả lời mạch lạc, trôi chảy.
 `;
         const promptText = message.content
             .replace(new RegExp(`<@!?${client.user.id}>`, 'g'), '')
@@ -552,7 +553,7 @@ QUY TẮC:
 
     } catch (error) {
         console.error("Lỗi xử lý:", error);
-        await message.channel.send("Hệ thống lỗi òi :))) Bảo bro <@1422193218006679745> sửa đê.");
+        await message.channel.send("BOT ERROR");
     }
 });
 
