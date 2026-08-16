@@ -119,10 +119,8 @@ client.once('clientReady', async () => {
 });
 
 client.on('interactionCreate', async (interaction) => {
-    if (interaction.isModalSubmit()) {
-
     
-    if (interaction.commandName === 'bellrate') {
+    if (interaction.commandName === 'bellrate') {    
         const target = interaction.options.getUser('user') || interaction.user;
 
         let rate = Math.floor(Math.random() * 101);
@@ -176,7 +174,6 @@ client.on('interactionCreate', async (interaction) => {
             });
         }
     }
-
     if (interaction.commandName === 'chat') {
         const userId = interaction.user.id;
         const correctID = ["1422193218006679745"];
