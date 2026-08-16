@@ -39,15 +39,7 @@ const commands = [
                 .setName('user')
                 .setDescription('Người muốn đo độ béo')
                 .setRequired(false)
-        ),
-    new SlashCommandBuilder()
-        .setName('tank')
-        .setDescription('Quản lý xe tăng')
-        .addSubcommand(subcommand =>
-            subcommand
-                .setName('new')
-                .setDescription('Tạo một xe tăng mới')
-        ),
+        )
 ].map(command => command.toJSON());
 
 const PORT = process.env.PORT || 3000;
@@ -129,96 +121,7 @@ client.once('clientReady', async () => {
 client.on('interactionCreate', async (interaction) => {
     if (interaction.isModalSubmit()) {
 
-        if (interaction.customId === 'tankTargetModal') {
-            const input = interaction.fields
-                .getTextInputValue('tankTargetInput')
-                .trim();
-        
-            try {
-                const members = await interaction.guild.members.fetch();
-        
-                const targetMember = members.find(
-                    member =>
-                        member.displayName.trim().toLowerCase() ===
-                        input.trim().toLowerCase()
-                );
-        
-                if (!targetMember) {
-                    await interaction.reply({
-                        content: `Không tìm thấy người dùng có Display Name \`${input}\` trong server.`,
-                        flags: MessageFlags.Ephemeral
-                    });
-                    return;
-                }
-        
-                await interaction.reply(
-                    `${targetMember} đã bị dân chủ bởi Verity bằng Xe Tăng.`
-                );
-        
-            } catch (error) {
-                console.error('Lỗi tìm mục tiêu xe tăng:', error);
-        
-                if (!interaction.replied && !interaction.deferred) {
-                    await interaction.reply({
-                        content: 'Có lỗi xảy ra khi tìm mục tiêu.',
-                        flags: MessageFlags.Ephemeral
-                    });
-                }
-            }
-        
-            return;
-        }
-
-
-    if (interaction.isButton()) {
-        if (interaction.customId === 'tankTarget') {
-            const modal = new ModalBuilder()
-                .setCustomId('tankTargetModal')
-                .setTitle('Chọn mục tiêu xe tăng');
-
-            const targetInput = new TextInputBuilder()
-                .setCustomId('tankTargetInput')
-                .setLabel('Mục tiêu')
-                .setPlaceholder('@Verity')
-                .setStyle(TextInputStyle.Short)
-                .setRequired(true)
-                .setMaxLength(100);
-
-            const row = new ActionRowBuilder()
-                .addComponents(targetInput);
-
-            modal.addComponents(row);
-
-            await interaction.showModal(modal);
-
-            return;
-        }
-    }
-
-    if (!interaction.isChatInputCommand()) return;
-
-    if (
-        interaction.commandName === 'tank' &&
-        interaction.options.getSubcommand() === 'new'
-    ) {
-        const button = new ButtonBuilder()
-            .setCustomId('tankTarget')
-            .setLabel('Chọn mục tiêu')
-            .setStyle(ButtonStyle.Danger);
-
-        const row = new ActionRowBuilder()
-            .addComponents(button);
-
-        await interaction.reply({
-            content: 'Đã tạo xe tăng mới, vui lòng chọn mục tiêu',
-            components: [row],
-            flags: MessageFlags.Ephemeral
-
-        });
-
-        return;
-    }
-
+    
     if (interaction.commandName === 'bellrate') {
         const target = interaction.options.getUser('user') || interaction.user;
 
