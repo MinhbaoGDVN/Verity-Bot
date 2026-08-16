@@ -13,7 +13,7 @@ const server = http.createServer((req, res) => {
 
 const userDepTrai = [`1025281361025703936`, `1459504029641212131`]
 const userAdmin = [`1422193218006679745`]
-const birthdayUser = [`1459504029641212131`]
+const birthdayUser = []
 
 const commands = [
     new SlashCommandBuilder()
